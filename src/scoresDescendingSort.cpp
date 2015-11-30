@@ -19,7 +19,35 @@ struct student {
 	char name[10];
 	int score;
 };
-
+void swapstr(struct student *students, int index, int minindex)
+{
+	int index1;
+	char str[15];
+	for (index1 = 0; students[index].name[index1] != NULL; index1++)
+		str[index1] = students[index].name[index1];
+	str[index1] = '\0';
+	for (index1 = 0; students[minindex].name[index1] != '\0'; index1++)
+		students[index].name[index1] = students[minindex].name[index1];
+	students[index].name[index1] = '\0';
+	for (index1 = 0; str[index1] != '\0'; index1++)
+		students[minindex].name[index1] = str[index1];
+	students[minindex].name[index1] = '\0';
+}
 void * scoresDescendingSort(struct student *students, int len) {
-	return NULL;
+	int index1, index2, index;
+	if (students == NULL || len<0)
+		return NULL;
+	for (index1 = 0; index1 < len; index1++)
+	{
+		for (index2 = 0; index2 < len - 1; index2++)
+		{
+			if (students[index2].score < students[index2 + 1].score)
+			{
+				students[index2].score = students[index2].score + students[index2 + 1].score;
+				students[index2 + 1].score = students[index2].score - students[index2 + 1].score;
+				students[index2].score = students[index2].score - students[index2 + 1].score;
+				swapstr(students, index2, index2 + 1);
+			}
+		}
+	}
 }
