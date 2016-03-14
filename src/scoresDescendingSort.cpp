@@ -19,10 +19,13 @@ struct student {
 	char name[10];
 	int score;
 };
+
+
 void swapstr(struct student *students, int index, int minindex)
 {
 	int index1;
-	char str[15];
+	char *str;
+	str = (char *)malloc(sizeof(char)* 15);
 	for (index1 = 0; students[index].name[index1] != NULL; index1++)
 		str[index1] = students[index].name[index1];
 	str[index1] = '\0';
@@ -33,21 +36,42 @@ void swapstr(struct student *students, int index, int minindex)
 		students[minindex].name[index1] = str[index1];
 	students[minindex].name[index1] = '\0';
 }
+void swap_score(struct student *students, int index_low, int index_high)
+{
+	students[index_low].score = students[index_low].score + students[index_high].score;
+	students[index_high].score = students[index_low].score - students[index_high].score;
+	students[index_low].score = students[index_low].score - students[index_high].score;
+}
+void quick_sort(struct student *students, int low, int high)
+{
+	int index_low, index_high;
+	if (low < high)
+	{
+		for (index_low = low, index_high = high; index_low <= index_high;)
+		{
+			if (students[index_low].score >= students[low].score)
+				index_low++;
+			else if (students[index_high].score < students[low].score)
+				index_high--;
+
+			else
+			{
+				swapstr(students, index_low, index_high);
+				swap_score(students, index_low, index_high);
+			}
+		}
+		if (students[index_high].score > students[low].score)
+		{
+			swapstr(students, index_high, low);
+			swap_score(students, index_high, low);
+		}
+		quick_sort(students, low, index_high - 1);
+		quick_sort(students, index_high + 1, high);
+	}
+}
 void * scoresDescendingSort(struct student *students, int len) {
 	int index1, index2, index;
 	if (students == NULL || len<0)
 		return NULL;
-	for (index1 = 0; index1 < len; index1++)
-	{
-		for (index2 = 0; index2 < len - 1; index2++)
-		{
-			if (students[index2].score < students[index2 + 1].score)
-			{
-				students[index2].score = students[index2].score + students[index2 + 1].score;
-				students[index2 + 1].score = students[index2].score - students[index2 + 1].score;
-				students[index2].score = students[index2].score - students[index2 + 1].score;
-				swapstr(students, index2, index2 + 1);
-			}
-		}
-	}
+	quick_sort(students, 0, len - 1);
 }
