@@ -15,15 +15,52 @@ NOTES:
 
 #include <stdio.h>
 
+int less_count_binary_search(int *arr, int size, int num)
+{
+	int low, mid, high;
+	for (low = 0, high = size - 1; low <= high;)
+	{
+		mid = (low + high) / 2;
+		if (arr[mid] >= num&&arr[mid - 1] < num)
+			return mid;
+		if (num < arr[mid])
+			high = mid - 1;
+		else
+			low = mid + 1;
+	}
+	return 0; //no lesser elemnts than num
+}
+int more_count_binary_search(int *arr, int size, int left_bound,int num)
+{
+	int low, mid, high;
+	for (low = left_bound, high = size - 1; low <= high;)
+	{
+		mid = (low + high) / 2;
+		if (arr[mid] > num&&arr[mid - 1] <= num)
+			return size - mid;
+		if (arr[mid] < num)
+			low = mid + 1;
+		else
+			high = mid - 1;
+	}
+	return 0;   //no greater elements than num
+}
 void * studentsCount(int *Arr, int len, int score, int *lessCount, int *moreCount) {
-	int index;
 	if (len<0||Arr==NULL)
 	return NULL;
-	for (*lessCount = *moreCount = index = 0; index < len; index++)
+	if (Arr[0]>score)
 	{
-		if (Arr[index]>score)
-			moreCount[0]++;
-		if (Arr[index] < score)
-			lessCount[0]++;
+		moreCount[0] = len;  //all elements are grearter than given score
+		lessCount[0] = 0;
+	}
+	else if (Arr[len - 1] < score)     
+	{
+		lessCount[0] = len;  //all elements are lesser than given score
+		moreCount[0] = 0;
+	}
+	else
+	{
+		lessCount[0] = less_count_binary_search(Arr, len, score);
+		moreCount[0] = more_count_binary_search(Arr, len, lessCount[0], score);
 	}
 }
