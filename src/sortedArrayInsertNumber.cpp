@@ -14,21 +14,44 @@ NOTES: Use realloc to allocate memory.
 #include <stdio.h>
 #include <malloc.h>
 
-int * sortedArrayInsertNumber(int *Arr, int len, int num)
+void shift_right(int *Arr, int len, int k)
 {
-	int index;
-	if (Arr==NULL||len<0)
-	return NULL;
-	Arr = (int *)realloc(Arr, sizeof(int)*(len + 1));
-	Arr[len] = num;
-	for (index = len; index>0; index--)
+	for (; len >= k; len--)
+		Arr[len] = Arr[len - 1];
+}
+
+int binary_search(int *arr, int size, int num)
+{
+	int low, mid, high;
+	for (low = 0, high = size - 1; low <= high;)
 	{
-		if (Arr[index - 1] > Arr[index])
-		{
-			Arr[index] = Arr[index] + Arr[index - 1];
-			Arr[index - 1] = Arr[index] - Arr[index - 1];
-			Arr[index] = Arr[index] - Arr[index - 1];
-		}
+		mid = (low + high) / 2;
+		if (arr[mid] >= num&&arr[mid - 1] < num)
+			return mid;
+		if (arr[mid] < num)
+			low = mid + 1;
+		else
+			high = mid - 1;
 	}
-	return Arr;
+}
+int * sortedArrayInsertNumber(int *arr, int size, int num)
+{
+	int position;
+	if (arr == NULL || size <= 0)
+		return NULL;
+	arr = (int *)realloc(arr,sizeof(int)*(size + 1));
+	if (arr[size - 1] <= num)
+		arr[size] = num;
+	else if (arr[0] >= num)
+	{
+		shift_right(arr, size, 0);
+		arr[0] = num;
+	}
+	else
+	{
+		position = binary_search(arr, size, num);
+		shift_right(arr, size, position);
+		arr[position] = num;
+	}
+	return arr;
 }
